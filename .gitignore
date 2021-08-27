@@ -1,0 +1,19 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+
+# Distribution / packaging
+*.egg-info/
+
+# Unit test / coverage reports
+htmlcov/
+.coverage
+.pytest_cache/
+
+# pyenv
+.python-version
+
+# Environments
+.venv
+
+# Development
+.dev/
