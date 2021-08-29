@@ -47,7 +47,10 @@ def main() -> None:
     tasks = []
 
     source = s.iterdir() if (s := config['source']).is_dir() else [s]
-    photos = (fp for fp in source if fp.suffix.lower() in ('.jpg', '.jpeg'))
+    photos = (
+        fp for fp in source if fp.suffix.lower()
+        in (f'.{ext}' for ext in config['filter'])
+    )
     for i, photo_path in enumerate(photos):
 
         logger.info('Handling of %s', photo_path.name)
@@ -80,7 +83,7 @@ def main() -> None:
         else:
             dest = config['dest'] / \
                 photo_path.relative_to(config['source']).parent / \
-                dt.strftime(config['template'])
+                f'{dt.strftime(config["template"])}{photo_path.suffix}'
         tasks.append(
             Task(source=photo_path, dest=dest, mode=config['file_mode']),
         )

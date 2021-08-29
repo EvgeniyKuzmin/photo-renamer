@@ -10,7 +10,8 @@ logger = logging.getLogger(__name__)
 DEFAULTS = {
     'file_mode': 'copy',
     'extraction_mode': 'all',
-    'template': '%Y-%m-%d_%H-%M-%S.jpg',
+    'template': '%Y-%m-%d_%H-%M-%S',
+    'filter': ['jpg'],
     'logging_level': logging.INFO,
     'logging_format': (
         '%(asctime)s[%(levelname).4s]'
@@ -20,23 +21,23 @@ DEFAULTS = {
 
 
 def _read_args() -> Namespace:
-    """Return a dict with configuration."""
     parser = ArgumentParser(
         prog='photo-renamer',
         formatter_class=RawDescriptionHelpFormatter,
         description=dedent("""
         Photo Renamer
         -------------
-        Enables you making collections of unique JPEG-photos with names are
-        formatted by a specific template.
+        Enables you making collections of unique photos or
+        videos with names are formatted by a specific template.
 
         Renamer does it by executing the following actions:
-          1. Iterating over the source and searching for JPEG-files.
-          2. Checking file uniqueness using SHA-256 comparison.
-          3. Extracting time of creation from a file\'s attributes (metadata
-             or filename).
-          4. Generating a new name for a file, and applying it to a existed or
-             a new one file.
+        - Iterating over the source and searching for files according with a
+          preset filter.
+        - Checking file uniqueness using SHA-256 comparison.
+        - Extracting time of creation from a file's attributes (metadata or
+          filename).
+        - Generating a new name for a file, and applying it to a existed or a
+          new one file.
         """),
     )
     parser.set_defaults(**DEFAULTS)
@@ -48,6 +49,10 @@ def _read_args() -> Namespace:
     parser.add_argument(
         '-t', '--template',
         help='Template for file naming based on time of creation',
+    )
+    parser.add_argument(
+        '-f', '--filter', nargs='+', metavar='EXT',
+        help='File extensions that are suitable for processing',
     )
     parser.add_argument(
         '-d', '--dest', type=Path,
