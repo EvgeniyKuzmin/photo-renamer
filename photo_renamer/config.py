@@ -1,6 +1,7 @@
-from argparse import ArgumentParser, Namespace
+from argparse import ArgumentParser, Namespace, RawDescriptionHelpFormatter
 import logging
 from pathlib import Path
+from textwrap import dedent
 from typing import Any
 
 
@@ -22,18 +23,21 @@ def _read_args() -> Namespace:
     """Return a dict with configuration."""
     parser = ArgumentParser(
         prog='photo-renamer',
-        description=''
-        'Photo Renamer. '
-        'Enables you making collections of unique JPEG-photos with names are '
-        'formatted by a specific template. '
+        formatter_class=RawDescriptionHelpFormatter,
+        description=dedent("""
+        Photo Renamer
+        -------------
+        Enables you making collections of unique JPEG-photos with names are
+        formatted by a specific template.
 
-        'Renamer does it by executing the following actions: '
-        '1. Iterating over the source and searching for JPEG-files. '
-        '2. Checking file uniqueness using SHA-256 comparison. '
-        '3. Extracting time of creation from a file\'s attributes (metadata '
-        'or filename). '
-        '4. Generating a new name for a file, and applying it to a existed or '
-        'a new one file.',
+        Renamer does it by executing the following actions:
+          1. Iterating over the source and searching for JPEG-files.
+          2. Checking file uniqueness using SHA-256 comparison.
+          3. Extracting time of creation from a file\'s attributes (metadata
+             or filename).
+          4. Generating a new name for a file, and applying it to a existed or
+             a new one file.
+        """),
     )
     parser.set_defaults(**DEFAULTS)
     parser.add_argument(
