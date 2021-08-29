@@ -6,6 +6,17 @@ from typing import Any
 
 logger = logging.getLogger(__name__)
 
+DEFAULTS = {
+    'mode': 'copy',
+    'template': '%Y-%m-%d_%H-%M-%S.jpg',
+    'meta': False,
+    'logging_level': logging.INFO,
+    'logging_format': (
+        '%(asctime)s[%(levelname).4s]'
+        '%(name)s.%(funcName)s:%(lineno)d %(message)s'
+    ),
+}
+
 
 def _read_args() -> Namespace:
     """Return a dict with configuration."""
@@ -24,12 +35,12 @@ def _read_args() -> Namespace:
         '4. Generating a new name for a file, and applying it to a existed or '
         'a new one file.',
     )
+    parser.set_defaults(**DEFAULTS)
     parser.add_argument(
         'source', metavar='SOURCE', type=Path,
         help='A path to a source directory or a file',
     )
 
-    parser.set_defaults(mode='copy')
     mode_group = parser.add_argument_group('mode')
     mode_group.add_argument(
         '-c', '--copy', dest='mode', const='copy', action='store_const',
@@ -41,7 +52,7 @@ def _read_args() -> Namespace:
     )
 
     parser.add_argument(
-        '-t', '--template', default='%Y-%m-%d_%H-%M-%S.jpg',
+        '-t', '--template',
         help='Template for file naming based on time of creation',
     )
     parser.add_argument(
@@ -49,17 +60,10 @@ def _read_args() -> Namespace:
         help='A path to the destination directory (in case of a copy-mode)',
     )
     parser.add_argument(
-        '-m', '--meta', action='store_true', default=False,
+        '-m', '--meta', action='store_true',
         help='Extract file\'s date from metadata only',
     )
 
-    parser.set_defaults(
-        logging_level=logging.INFO,
-        logging_format=(
-            '%(asctime)s[%(levelname).4s]'
-            '%(name)s.%(funcName)s:%(lineno)d %(message)s'
-        ),
-    )
     logging_group = parser.add_argument_group('logging')
     logging_group.add_argument(
         '-1', '--debug', dest='logging_level', action='store_const',
