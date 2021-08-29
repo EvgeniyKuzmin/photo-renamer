@@ -81,7 +81,9 @@ def main() -> None:
             dest = config['dest'] / \
                 photo_path.relative_to(config['source']).parent / \
                 dt.strftime(config['template'])
-        tasks.append(Task(source=photo_path, dest=dest, mode=config['mode']))
+        tasks.append(
+            Task(source=photo_path, dest=dest, mode=config['file_mode']),
+        )
 
     logger.info(
         'JPEG-files were reviewed %d, tasks were created %d',

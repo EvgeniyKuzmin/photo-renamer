@@ -8,9 +8,9 @@ from typing import Any
 logger = logging.getLogger(__name__)
 
 DEFAULTS = {
-    'mode': 'copy',
-    'template': '%Y-%m-%d_%H-%M-%S.jpg',
+    'file_mode': 'copy',
     'extraction_mode': 'all',
+    'template': '%Y-%m-%d_%H-%M-%S.jpg',
     'logging_level': logging.INFO,
     'logging_format': (
         '%(asctime)s[%(levelname).4s]'
@@ -57,12 +57,12 @@ def _read_args() -> Namespace:
     mode_group = parser.add_argument_group('mode')
     mode_group_me = mode_group.add_mutually_exclusive_group()
     mode_group_me.add_argument(
-        '-c', '--copy', dest='mode', const='copy', action='store_const',
+        '-c', '--copy', dest='file_mode', const='copy', action='store_const',
         help='COPY mode: make copies of existed files',
     )
     mode_group_me.add_argument(
-        '-r', '--rename', dest='mode', const='rename', action='store_const',
-        help='RENAME mode: rename existed files',
+        '-r', '--rename', dest='file_mode', const='rename',
+        action='store_const', help='RENAME mode: rename existed files',
     )
 
     extraction_group = parser.add_argument_group('extraction mode')
@@ -100,7 +100,7 @@ def _read_args() -> Namespace:
     )
 
     args = parser.parse_args()
-    if args.mode == 'copy' and not args.dest:
+    if args.file_mode == 'copy' and not args.dest:
         parser.error('--dest is required when --copy is set')
 
     if not (args.source.is_dir() or args.source.is_file()):
