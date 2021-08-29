@@ -46,11 +46,12 @@ def _read_args() -> Namespace:
     )
 
     mode_group = parser.add_argument_group('mode')
-    mode_group.add_argument(
+    mode_group_me = mode_group.add_mutually_exclusive_group()
+    mode_group_me.add_argument(
         '-c', '--copy', dest='mode', const='copy', action='store_const',
         help='COPY mode: make copies of existed files',
     )
-    mode_group.add_argument(
+    mode_group_me.add_argument(
         '-r', '--rename', dest='mode', const='rename', action='store_const',
         help='RENAME mode: rename existed files',
     )
@@ -69,19 +70,20 @@ def _read_args() -> Namespace:
     )
 
     logging_group = parser.add_argument_group('logging')
-    logging_group.add_argument(
+    logging_group_me = logging_group.add_mutually_exclusive_group()
+    logging_group_me.add_argument(
         '-1', '--debug', dest='logging_level', action='store_const',
         const=logging.DEBUG, help='Set DEBUG level',
     )
-    logging_group.add_argument(
+    logging_group_me.add_argument(
         '-2', '--info', dest='logging_level', action='store_const',
         const=logging.INFO, help='Set INFO level',
     )
-    logging_group.add_argument(
+    logging_group_me.add_argument(
         '-3', '--warning', dest='logging_level', action='store_const',
         const=logging.WARNING, help='Set WARNING level',
     )
-    logging_group.add_argument(
+    logging_group_me.add_argument(
         '-4', '--error', dest='logging_level', action='store_const',
         const=logging.ERROR, help='Set ERROR level',
     )
