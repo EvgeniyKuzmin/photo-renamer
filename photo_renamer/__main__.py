@@ -66,7 +66,7 @@ def main() -> None:
         else:
             hashes[hsh] = photo_path
 
-        dt = get_date(photo_path, metadata_only=config['meta'])
+        dt = get_date(photo_path, config['extraction_mode'])
         if not isinstance(dt, datetime):
             logger.error(
                 "The creation date of %s wasn't extracted", photo_path.name,

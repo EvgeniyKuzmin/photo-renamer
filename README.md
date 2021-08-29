@@ -11,7 +11,7 @@ Renamer does it by executing the following actions:
 
 ## Usage
 ```
-usage: photo-renamer [-h] [-c] [-r] [-t TEMPLATE] [-d DEST] [-m] [-1] [-2] [-3] [-4] SOURCE
+usage: photo-renamer [-h] [-t TEMPLATE] [-d DEST] [-c | -r] [-m | -n | -a] [-1 | -2 | -3 | -4] SOURCE
 
 positional arguments:
   SOURCE                A path to a source directory or a file
@@ -21,11 +21,15 @@ optional arguments:
   -t TEMPLATE, --template TEMPLATE
                         Template for file naming based on time of creation
   -d DEST, --dest DEST  A path to the destination directory (in case of a copy-mode)
-  -m, --meta            Extract file's date from metadata only
 
 mode:
   -c, --copy            COPY mode: make copies of existed files
   -r, --rename          RENAME mode: rename existed files
+
+extraction mode:
+  -m, --meta            Extract a date from a metadata only
+  -n, --name            Extract a date from a filename only
+  -a, --all             Extract a date via all available methods
 
 logging:
   -1, --debug           Set DEBUG level

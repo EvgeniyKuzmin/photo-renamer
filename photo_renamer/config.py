@@ -10,7 +10,7 @@ logger = logging.getLogger(__name__)
 DEFAULTS = {
     'mode': 'copy',
     'template': '%Y-%m-%d_%H-%M-%S.jpg',
-    'meta': False,
+    'extraction_mode': 'all',
     'logging_level': logging.INFO,
     'logging_format': (
         '%(asctime)s[%(levelname).4s]'
@@ -45,6 +45,15 @@ def _read_args() -> Namespace:
         help='A path to a source directory or a file',
     )
 
+    parser.add_argument(
+        '-t', '--template',
+        help='Template for file naming based on time of creation',
+    )
+    parser.add_argument(
+        '-d', '--dest', type=Path,
+        help='A path to the destination directory (in case of a copy-mode)',
+    )
+
     mode_group = parser.add_argument_group('mode')
     mode_group_me = mode_group.add_mutually_exclusive_group()
     mode_group_me.add_argument(
@@ -56,17 +65,19 @@ def _read_args() -> Namespace:
         help='RENAME mode: rename existed files',
     )
 
-    parser.add_argument(
-        '-t', '--template',
-        help='Template for file naming based on time of creation',
+    extraction_group = parser.add_argument_group('extraction mode')
+    extraction_group_me = extraction_group.add_mutually_exclusive_group()
+    extraction_group_me.add_argument(
+        '-m', '--meta', dest='extraction_mode', const='meta',
+        action='store_const', help='Extract a date from a metadata only',
     )
-    parser.add_argument(
-        '-d', '--dest', type=Path,
-        help='A path to the destination directory (in case of a copy-mode)',
+    extraction_group_me.add_argument(
+        '-n', '--name', dest='extraction_mode', const='name',
+        action='store_const', help='Extract a date from a filename only',
     )
-    parser.add_argument(
-        '-m', '--meta', action='store_true',
-        help='Extract file\'s date from metadata only',
+    extraction_group_me.add_argument(
+        '-a', '--all', dest='extraction_mode', const='all',
+        action='store_const', help='Extract a date via all available methods',
     )
 
     logging_group = parser.add_argument_group('logging')

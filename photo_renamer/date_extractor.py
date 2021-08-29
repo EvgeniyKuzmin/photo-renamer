@@ -3,7 +3,7 @@ from datetime import datetime
 import logging
 from pathlib import Path
 import re
-from typing import Optional
+from typing import Literal, Optional
 
 import exifread
 
@@ -11,7 +11,7 @@ import exifread
 logger = logging.getLogger(__name__)
 
 
-def get_date_via_exifread(file_path: Path) -> datetime:
+def _get_date_via_exifread(file_path: Path) -> datetime:
     stop_tag = 'EXIF DateTimeOriginal'
     with open(file_path, 'rb') as file_desc:
         tags = exifread.process_file(file_desc, stop_tag=stop_tag)
@@ -25,18 +25,26 @@ def get_date_via_exifread(file_path: Path) -> datetime:
     return datetime.strptime(dt_str, '%Y:%m:%d %H:%M:%S')
 
 
-def get_date_via_re_and_datetime(file_path: Path) -> Optional[datetime]:
+def _get_date_via_re_and_datetime(file_path: Path) -> Optional[datetime]:
     pattern = r'\d{8}_\d{6}'
     if match := re.search(pattern, file_path.name):
         return datetime.strptime(match.group(), '%Y%m%d_%H%M%S')
 
 
-def get_date(file_path: Path, metadata_only=False) -> Optional[datetime]:
-    functions = (
-        get_date_via_exifread,
-        *([get_date_via_re_and_datetime] if not metadata_only else []),
-    )
-    for func in functions:
+def get_date(
+        file_path: Path,
+        mode: Literal['meta', 'name', 'all'],
+        ) -> Optional[datetime]:
+
+    extractors = {
+        'meta': _get_date_via_exifread,
+        'name': _get_date_via_re_and_datetime,
+    }
+
+    if mode != 'all':
+        extractors = {mode: extractors[mode]}
+
+    for func in extractors.values():
         with suppress(KeyError, TypeError):
             dt = func(file_path)
             if isinstance(dt, datetime):
