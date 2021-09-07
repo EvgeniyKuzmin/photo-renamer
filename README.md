@@ -4,14 +4,14 @@
 Enables you making collections of unique photos or videos with names are formatted by a specific template.
 
 Renamer does it by executing the following actions:
-- Iterating over the source and searching for files according with a preset filter.
+- Iterating over the source and searching for files according with a preset extensions.
 - Checking file uniqueness using SHA-256 comparison.
 - Extracting time of creation from a file's attributes (metadata or filename).
 - Generating a new name for a file, and applying it to a existed or a new one file.
 
 ## Usage
 ```
-usage: photo-renamer [-h] [-t TEMPLATE] [-f EXT [EXT ...]] [-d DEST] [-c | -r] [-m | -n | -a] [-1 | -2 | -3 | -4] SOURCE
+usage: photo-renamer [-h] [-t TEMPLATE] [-e EXT [EXT ...]] [-d DEST] [-c | -r] [-m | -n | -a] [-1 | -2 | -3 | -4] SOURCE
 
 positional arguments:
   SOURCE                A path to a source directory or a file
@@ -20,7 +20,7 @@ optional arguments:
   -h, --help            show this help message and exit
   -t TEMPLATE, --template TEMPLATE
                         Template for file naming based on time of creation
-  -f EXT [EXT ...], --filter EXT [EXT ...]
+  -e EXT [EXT ...], --extensions EXT [EXT ...]
                         File extensions that are suitable for processing
   -d DEST, --dest DEST  A path to the destination directory (in case of a copy-mode)
 

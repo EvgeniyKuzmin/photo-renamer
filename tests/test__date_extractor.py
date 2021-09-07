@@ -25,8 +25,18 @@ def fxt_get_date_via_re_and_datetime(request):
         yield mock
 
 
+@pytest.fixture()
+def fxt_get_date_via_file_attrs(request):
+    with patch(
+            'photo_renamer.date_extractor.'
+            '_get_date_via_file_attrs') as mock:
+        mock.__name__ = '_get_date_via_file_attrs'
+        yield mock
+
+
 def test__get_date__meta__exifread_called_only(
         fxt_get_date_via_exifread, fxt_get_date_via_re_and_datetime,
+        fxt_get_date_via_file_attrs,
         ):
 
     fake_jpg = Path('/fake.jpg')
@@ -34,10 +44,12 @@ def test__get_date__meta__exifread_called_only(
 
     fxt_get_date_via_exifread.assert_called_once_with(fake_jpg)
     fxt_get_date_via_re_and_datetime.assert_not_called()
+    fxt_get_date_via_file_attrs.assert_not_called()
 
 
 def test__get_date__name__via_re_dt_called_only(
         fxt_get_date_via_exifread, fxt_get_date_via_re_and_datetime,
+        fxt_get_date_via_file_attrs,
         ):
 
     fake_jpg = Path('/fake.jpg')
@@ -45,10 +57,25 @@ def test__get_date__name__via_re_dt_called_only(
 
     fxt_get_date_via_exifread.assert_not_called()
     fxt_get_date_via_re_and_datetime.assert_called_once_with(fake_jpg)
+    fxt_get_date_via_file_attrs.assert_not_called()
+
+
+def test__get_date__file__via_file_attrs_called_only(
+        fxt_get_date_via_exifread, fxt_get_date_via_re_and_datetime,
+        fxt_get_date_via_file_attrs,
+        ):
+
+    fake_jpg = Path('/fake.jpg')
+    get_date(fake_jpg, 'file')
+
+    fxt_get_date_via_exifread.assert_not_called()
+    fxt_get_date_via_re_and_datetime.assert_not_called()
+    fxt_get_date_via_file_attrs.assert_called_once_with(fake_jpg)
 
 
 def test__get_date__all__all_functions_called(
         fxt_get_date_via_exifread, fxt_get_date_via_re_and_datetime,
+        fxt_get_date_via_file_attrs,
         ):
 
     fake_jpg = Path('/fake.jpg')
@@ -56,29 +83,34 @@ def test__get_date__all__all_functions_called(
 
     fxt_get_date_via_exifread.assert_called_once_with(fake_jpg)
     fxt_get_date_via_re_and_datetime.assert_called_once_with(fake_jpg)
+    fxt_get_date_via_file_attrs.assert_called_once_with(fake_jpg)
 
 
 def test__get_date__all_return_none__result_is_none(
         fxt_get_date_via_exifread, fxt_get_date_via_re_and_datetime,
+        fxt_get_date_via_file_attrs,
         ):
 
-    fake_jpg = Path('/fake.jpg')
     fxt_get_date_via_exifread.return_value = None
     fxt_get_date_via_re_and_datetime.return_value = None
+    fxt_get_date_via_file_attrs.return_value = None
 
+    fake_jpg = Path('/fake.jpg')
     result = get_date(fake_jpg, 'all')
     assert result is None
 
 
 def test__get_date__second_func_returns_dt__result_is_dt(
         fxt_get_date_via_exifread, fxt_get_date_via_re_and_datetime,
+        fxt_get_date_via_file_attrs,
         ):
 
-    fake_jpg = Path('/fake.jpg')
     dt = datetime.now()
     fxt_get_date_via_exifread.return_value = None
-    fxt_get_date_via_re_and_datetime.return_value = dt
+    fxt_get_date_via_re_and_datetime.return_value = None
+    fxt_get_date_via_file_attrs.return_value = dt
 
+    fake_jpg = Path('/fake.jpg')
     result = get_date(fake_jpg, 'all')
     assert result == dt
 

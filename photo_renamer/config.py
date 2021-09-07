@@ -11,7 +11,7 @@ DEFAULTS = {
     'file_mode': 'copy',
     'extraction_mode': 'all',
     'template': '%Y-%m-%d_%H-%M-%S',
-    'filter': ['jpg'],
+    'extensions': ['jpg'],
     'logging_level': logging.INFO,
     'logging_format': (
         '%(asctime)s[%(levelname).4s]'
@@ -32,7 +32,7 @@ def _read_args() -> Namespace:
 
         Renamer does it by executing the following actions:
         - Iterating over the source and searching for files according with a
-          preset filter.
+          preset extensions.
         - Checking file uniqueness using SHA-256 comparison.
         - Extracting time of creation from a file's attributes (metadata or
           filename).
@@ -51,7 +51,7 @@ def _read_args() -> Namespace:
         help='Template for file naming based on time of creation',
     )
     parser.add_argument(
-        '-f', '--filter', nargs='+', metavar='EXT',
+        '-e', '--extensions', nargs='+', metavar='EXT',
         help='File extensions that are suitable for processing',
     )
     parser.add_argument(
@@ -79,6 +79,11 @@ def _read_args() -> Namespace:
     extraction_group_me.add_argument(
         '-n', '--name', dest='extraction_mode', const='name',
         action='store_const', help='Extract a date from a filename only',
+    )
+    extraction_group_me.add_argument(
+        '-f', '--file', dest='extraction_mode', const='file',
+        action='store_const',
+        help="Extract a date from a file's statistic only",
     )
     extraction_group_me.add_argument(
         '-a', '--all', dest='extraction_mode', const='all',

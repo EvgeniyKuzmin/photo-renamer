@@ -46,50 +46,58 @@ def main() -> None:
     errors = defaultdict(list)
     tasks = []
 
-    source = s.iterdir() if (s := config['source']).is_dir() else [s]
-    photos = (
-        fp for fp in source if fp.suffix.lower()
-        in (f'.{ext}' for ext in config['filter'])
-    )
-    for i, photo_path in enumerate(photos):
+    exts = [f'.{e}' for e in config['extensions']]
+    source = s.rglob('**/*') if (s := config['source']).is_dir() else [s]
+    i = -1
+    for i, file_path in enumerate(filter(lambda f: f.is_file(), source)):
+        relative_path = str(file_path.relative_to(config['source']))
 
-        logger.info('Handling of %s', photo_path.name)
-        hsh = hashlib.sha256(photo_path.read_bytes()).hexdigest()
+        logger.info('Handling of "%s"', relative_path)
+        if file_path.suffix.lower() not in exts:
+            logging.warning(
+                'The extension of the file "%s" was filtered', relative_path,
+            )
+            continue
+
+        hsh = hashlib.sha256(file_path.read_bytes()).hexdigest()
         logger.info(
-            'The SHA256 value of %s is: %s',
-            photo_path.name, hsh,
+            'The SHA256 value of "%s" is: %s',
+            relative_path, hsh,
         )
         if hsh in hashes:
             logger.warning(
-                'File %s is a dublicate of "%s"',
-                photo_path.name, hashes[hsh].name,
+                'File "%s" is a dublicate of "%s"',
+                relative_path, str(hashes[hsh].relative_to(config['source'])),
             )
-            errors['duplicate'].append(photo_path.name)
+            errors['duplicate'].append((
+                relative_path,
+                str(hashes[hsh].relative_to(config['source'])),
+            ))
             continue
-        else:
-            hashes[hsh] = photo_path
 
-        dt = get_date(photo_path, config['extraction_mode'])
+        hashes[hsh] = file_path
+
+        dt = get_date(file_path, config['extraction_mode'])
         if not isinstance(dt, datetime):
             logger.error(
-                "The creation date of %s wasn't extracted", photo_path.name,
+                'The creation date of "%s" wasn\'t extracted', relative_path,
             )
-            errors['no date'].append(photo_path.name)
+            errors['no date'].append(relative_path)
             continue
-        logger.info("The creation date of %s is: %s", photo_path.name, dt)
+        logger.info('The creation date of "%s" is: %s', relative_path, dt)
 
         if config['dest'] is None:
-            dest = photo_path.parent / dt.strftime(config['template'])
+            dest = file_path.parent / dt.strftime(config['template'])
         else:
             dest = config['dest'] / \
-                photo_path.relative_to(config['source']).parent / \
-                f'{dt.strftime(config["template"])}{photo_path.suffix}'
+                file_path.relative_to(config['source']).parent / \
+                f'{dt.strftime(config["template"])}{file_path.suffix}'
         tasks.append(
-            Task(source=photo_path, dest=dest, mode=config['file_mode']),
+            Task(source=file_path, dest=dest, mode=config['file_mode']),
         )
 
     logger.info(
-        'JPEG-files were reviewed %d, tasks were created %d',
+        'Files were reviewed %d, tasks were created %d',
         i + 1, len(tasks),
     )
     process_tasks(tasks)

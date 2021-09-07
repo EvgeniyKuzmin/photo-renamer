@@ -28,21 +28,28 @@ def _get_date_via_exifread(file_path: Path) -> datetime:
     return datetime.strptime(dt_str, '%Y:%m:%d %H:%M:%S')
 
 
-
 def _get_date_via_re_and_datetime(file_path: Path) -> Optional[datetime]:
     pattern = r'\d{8}_\d{6}'
     if match := re.search(pattern, file_path.name):
         return datetime.strptime(match.group(), '%Y%m%d_%H%M%S')
 
 
+def _get_date_via_file_attrs(file_path: Path) -> datetime:
+    return min(
+        datetime.fromtimestamp(getattr(file_path.stat(), attr))
+        for attr in ('st_ctime', 'st_atime', 'st_mtime')
+    )
+
+
 def get_date(
         file_path: Path,
-        mode: Literal['meta', 'name', 'all'],
+        mode: Literal['meta', 'name', 'file', 'all'],
         ) -> Optional[datetime]:
 
     extractors = {
         'meta': _get_date_via_exifread,
         'name': _get_date_via_re_and_datetime,
+        'file': _get_date_via_file_attrs,
     }
 
     if mode != 'all':
