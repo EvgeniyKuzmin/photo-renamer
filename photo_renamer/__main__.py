@@ -1,30 +1,43 @@
-from collections import defaultdict, namedtuple
+from collections import defaultdict
 from datetime import datetime
 import hashlib
 import logging
-from pprint import pprint
+from pathlib import Path
 from shutil import copy
-
+from typing import NamedTuple
 
 from .config import configure_logging, get_config
 from .date_extractor import get_date
 
 
 logger = logging.getLogger(__name__)
-Task = namedtuple('Task', ('source', 'dest', 'mode'))
 
 
-def error_report(report: dict[str, list]) -> None:
+class Task(NamedTuple):
+
+    source: Path
+    dest: Path
+    mode: str
+
+
+def show_report(report: dict[str, list], files_count: int) -> None:
     if not report:
-        print('No errors')
+        logger.info(f'No errors, {files_count} successfully processed files')
         return
 
-    print('ERROR REPORT'.center(79, '='))
-    print(f'Duplicates: {len(report["duplicate"])}')
-    pprint(report["duplicate"])
+    errors_count = sum(len(errs) for errs in report.values())
+    logger.info('Processed files: %d', files_count)
+    logger.info('Errors count: %d', errors_count)
+    logger.info(
+        'Persent of errors: %d', int(100 * (errors_count / files_count)),
+    )
 
-    print(f'No date: {len(report["no date"])}')
-    pprint(report["no date"])
+    for error_type, typed_errors in report.items():
+        logger.info(f'{error_type}: %d'.capitalize(), len(typed_errors))
+        logger.info(
+            f'{error_type}:\n\t%s'.capitalize(),
+            '\n\t'.join(str(f) for f in typed_errors),
+        )
 
 
 def process_tasks(tasks: list[Task]) -> None:
@@ -54,6 +67,7 @@ def main() -> None:
 
         logger.info('Handling of "%s"', relative_path)
         if file_path.suffix.lower() not in exts:
+            errors['wrong extension'].append(relative_path)
             logging.warning(
                 'The extension of the file "%s" was filtered', relative_path,
             )
@@ -69,7 +83,7 @@ def main() -> None:
                 'File "%s" is a dublicate of "%s"',
                 relative_path, str(hashes[hsh].relative_to(config['source'])),
             )
-            errors['duplicate'].append((
+            errors['duplicates'].append((
                 relative_path,
                 str(hashes[hsh].relative_to(config['source'])),
             ))
@@ -102,7 +116,7 @@ def main() -> None:
     )
     process_tasks(tasks)
 
-    error_report(errors)
+    show_report(errors, files_count=i + 1)
 
 
 if __name__ == '__main__':
