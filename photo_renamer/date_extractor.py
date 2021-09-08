@@ -12,12 +12,15 @@ logger = logging.getLogger(__name__)
 
 
 def _get_date_via_exifread(file_path: Path) -> datetime:
-    stop_tag = 'EXIF DateTimeOriginal'
     with open(file_path, 'rb') as file_desc:
-        tags = exifread.process_file(file_desc, stop_tag=stop_tag)
+        tags = exifread.process_file(file_desc)
 
     dt_str = None
-    tag_names = (stop_tag, 'Image DateTime')
+    tag_names = (
+        'EXIF DateTimeOriginal',
+        'EXIF DateTimeDigitized',
+        'Image DateTime',
+    )
     for tag_name in tag_names:
         if tag_name in tags:
             dt_str = tags[tag_name].values
@@ -31,14 +34,22 @@ def _get_date_via_re_and_datetime(file_path: Path) -> Optional[datetime]:
         return datetime.strptime(match.group(), '%Y%m%d_%H%M%S')
 
 
+def _get_date_via_file_attrs(file_path: Path) -> datetime:
+    return min(
+        datetime.fromtimestamp(getattr(file_path.stat(), attr))
+        for attr in ('st_ctime', 'st_atime', 'st_mtime')
+    )
+
+
 def get_date(
         file_path: Path,
-        mode: Literal['meta', 'name', 'all'],
+        mode: Literal['meta', 'name', 'file', 'all'],
         ) -> Optional[datetime]:
 
     extractors = {
         'meta': _get_date_via_exifread,
         'name': _get_date_via_re_and_datetime,
+        'file': _get_date_via_file_attrs,
     }
 
     if mode != 'all':
