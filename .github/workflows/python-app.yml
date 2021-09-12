@@ -4,10 +4,9 @@
 name: Run flake8 pytest
 
 on:
-  push:
-#     branches: [ master ]
   pull_request:
     branches: [ master, develop ]
+  push:
 
 jobs:
   build:
@@ -16,17 +15,29 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+
     - name: Set up Python 3.9
       uses: actions/setup-python@v2
       with:
         python-version: 3.9
+
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
         python -m pip install -e .[dev]
+
     - name: Lint with flake8
       run: |
         flake8
-    - name: Test with pytest
+
+    - name: Run pytest with coverage
       run: |
-        pytest
+        coverage run -m pytest
+
+    - name: Upload Coverage to Codecov
+      uses: codecov/codecov-action@v1
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }}
+        fail_ci_if_error: true
+        verbose: true
+        flags: unittests
