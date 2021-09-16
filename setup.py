@@ -1,22 +1,35 @@
-from pathlib import Path
+import os
+from textwrap import fill
 
 from setuptools import find_packages, setup
 
+from photo_renamer import __author__, __doc__, __email__, __version__
+
+
+_name = __doc__.split('\n\n')[0].replace('.', '').lower().strip()
+_desc = ' '.join(__doc__.split('\n\n')[2].split())
+
 
 setup(
-    name='photo_renamer',
-    version='0.1.1',
-    description=(
-        'Enables you making collections of unique photos or '
-        'videos with names are formatted by a specific template.'
-    ),
-    keywords='jpeg',
-    long_description=Path(__file__).parent.joinpath('README.md').read_text(),
-    author='Evgeniy Kuzmin',
-    author_email='evgeniy.kuzmin.a.kuzmin@gmail.com',
+    name=_name.replace(' ', '_').lower(),
+    version=os.getenv('VERSION', __version__),
+    description=' '.join(__doc__.split('\n\n')[1].split()),
+    keywords=('photo', 'video', 'collection'),
+    long_description='\n' + '\n- '.join(fill(e) for e in _desc.split(' - ')),
+    author=__author__,
+    author_email=__email__,
+    license='MIT',
+    license_files=('LICENSE',),
+    platforms='Independent',
     url='https://github.com/EvgeniyKuzmin/photo_renamer',
     classifiers=[
-        "Programming Language :: Python :: 3.9",
+        'Development Status :: 2 - Pre-Alpha',
+        'Environment :: Console',
+        'Intended Audience :: System Administrators',
+        'License :: OSI Approved :: MIT License',
+        'Operating System :: OS Independent',
+        'Programming Language :: Python :: 3.9',
+        'Topic :: Software Development :: Version Control :: Git',
     ],
     packages=find_packages(),
     install_requires=[
@@ -35,7 +48,7 @@ setup(
     },
     entry_points={
         'console_scripts': [
-            'photo-renamer = photo_renamer.__main__:main',
+            f'{_name.replace(" ", "-")} = photo_renamer.__main__:main',
         ],
     },
 )
