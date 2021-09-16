@@ -1,8 +1,10 @@
 from argparse import ArgumentParser, Namespace, RawDescriptionHelpFormatter
 import logging
 from pathlib import Path
-from textwrap import dedent
+from textwrap import fill
 from typing import Any
+
+from . import __doc__
 
 
 logger = logging.getLogger(__name__)
@@ -18,27 +20,20 @@ DEFAULTS = {
         '%(name)s.%(funcName)s:%(lineno)d %(message)s'
     ),
 }
+_name = __doc__.split('\n\n')[0].replace('.', '').lower().strip()
+_desc_short = ' '.join(__doc__.split('\n\n')[1].split())
+_desc_add = ' '.join(__doc__.split('\n\n')[2].split())
 
 
 def _read_args() -> Namespace:
     parser = ArgumentParser(
-        prog='photo-renamer',
+        prog=_name.replace(' ', '-'),
         formatter_class=RawDescriptionHelpFormatter,
-        description=dedent("""
-        Photo Renamer
-        -------------
-        Enables you making collections of unique photos or
-        videos with names are formatted by a specific template.
-
-        Renamer does it by executing the following actions:
-        - Iterating over the source and searching for files according with a
-          preset extensions.
-        - Checking file uniqueness using SHA-256 comparison.
-        - Extracting time of creation from a file's attributes (metadata or
-          filename).
-        - Generating a new name for a file, and applying it to a existed or a
-          new one file.
-        """),
+        description='\n\n'.join((
+            f'{_name.title()}.',
+            fill(_desc_short),
+            '\n- '.join(fill(e) for e in _desc_add.split(' - ')),
+        )),
     )
     parser.set_defaults(**DEFAULTS)
     parser.add_argument(
