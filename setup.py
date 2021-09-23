@@ -45,6 +45,10 @@ setup(
             'coverage',
             'pytest',
         ],
+        'dist': [
+            'wheel',
+            'twine',
+        ],
     },
     entry_points={
         'console_scripts': [
