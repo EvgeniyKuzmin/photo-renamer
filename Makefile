@@ -2,10 +2,7 @@ PACKAGE_NAME=photo_renamer
 
 
 upload: build
-	.venv/bin/twine upload \
-		-r testpypi \
-		--username $(USERNAME) --password $(PASSWORD) \
-		dist/*
+	.venv/bin/twine upload -r testpypi dist/*
 
 build: test
 	.venv/bin/python setup.py bdist_wheel
