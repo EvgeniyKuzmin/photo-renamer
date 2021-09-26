@@ -6,10 +6,9 @@ name: Run flake8 pytest
 on:
   pull_request:
     branches: [ master, develop ]
-  push:
 
 jobs:
-  build:
+  test:
 
     runs-on: ubuntu-latest
 
@@ -41,3 +40,12 @@ jobs:
         fail_ci_if_error: true
         verbose: true
         flags: unittests
+
+    - name: 
+      uses: codecov/codecov-action@v1
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }}
+        fail_ci_if_error: true
+        verbose: true
+        flags: unittests
+

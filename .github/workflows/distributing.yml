@@ -1,0 +1,31 @@
+name: Distributing
+
+on:
+  push:
+    branches: [ master, develop ]
+
+jobs:
+  distribute:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Set up Python 3.9
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.9
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        python -m pip install -e .[dist]
+
+    - name: Build a distribution package
+      run: |
+        python setup.py bdist_wheel
+
+    - name: Upload to repository
+      run: |
+        twine upload --verbose --username ${{ secrets.TWINE_USERNAME }} --password ${{ secrets.TWINE_PASSWORD }} dist/*
