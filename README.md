@@ -2,6 +2,7 @@
 
 [![MIT license](https://img.shields.io/badge/License-MIT-blue.svg)](https://lbesson.mit-license.org/)
 ![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/EvgeniyKuzmin/photo-renamer)
+![PyPI](https://img.shields.io/pypi/v/photo-renamer)
 [![Python 3.6+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/release/python-390/)
 [![codecov](https://codecov.io/gh/EvgeniyKuzmin/photo-renamer/branch/master/graph/badge.svg?token=H5VYO0JKPS)](https://codecov.io/gh/EvgeniyKuzmin/photo-renamer)
 
