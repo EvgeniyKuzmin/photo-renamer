@@ -1,5 +1,5 @@
 import os
-from textwrap import fill
+from pathlib import Path
 
 from setuptools import find_packages, setup
 
@@ -14,8 +14,9 @@ setup(
     name=_name.replace(' ', '_').lower(),
     version=os.getenv('VERSION', __version__),
     description=' '.join(__doc__.split('\n\n')[1].split()),
-    keywords=('photo', 'video', 'collection'),
-    long_description='\n' + '\n- '.join(fill(e) for e in _desc.split(' - ')),
+    keywords=['photo', 'video', 'collection'],
+    long_description=Path('README.md').read_text(),
+    long_description_content_type='text/markdown',
     author=__author__,
     author_email=__email__,
     license='MIT',
