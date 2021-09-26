@@ -9,6 +9,6 @@ Renamer does it by executing the following actions:
 - Generating a new name for a file, and applying it to a existed or a new one file.
 """
 
-__version__ = '0.2.0'
+__version__ = '0.2.1'
 __author__ = 'Evgeniy Kuzmin'
 __email__ = 'evgeniy.a.kuzmin@gmail.com'
