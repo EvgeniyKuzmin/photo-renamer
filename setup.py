@@ -1,4 +1,3 @@
-import os
 from pathlib import Path
 
 from setuptools import find_packages, setup
@@ -7,12 +6,11 @@ from photo_renamer import __author__, __doc__, __email__, __version__
 
 
 _name = __doc__.split('\n\n')[0].replace('.', '').lower().strip()
-_desc = ' '.join(__doc__.split('\n\n')[2].split())
 
 
 setup(
-    name=_name.replace(' ', '_').lower(),
-    version=os.getenv('VERSION', __version__),
+    name=_name.replace(' ', '_'),
+    version=__version__,
     description=' '.join(__doc__.split('\n\n')[1].split()),
     keywords=['photo', 'video', 'collection'],
     long_description=Path('README.md').read_text(),
@@ -37,7 +35,7 @@ setup(
         'ExifRead',
     ],
     extras_require={
-        'dev': [
+        'test': [
             'flake8',
             'flake8-builtins',
             'flake8-commas',
