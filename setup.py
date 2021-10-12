@@ -36,17 +36,17 @@ setup(
     ],
     extras_require={
         'test': [
-            'flake8',
-            'flake8-builtins',
-            'flake8-commas',
-            'flake8-docstrings',
-            'flake8-import-order',
-            'coverage',
-            'pytest',
+            'flake8==3.9.2',
+            'flake8-builtins==1.5.3',
+            'flake8-commas==2.0.0',
+            'flake8-docstrings==1.6.0',
+            'flake8-import-order==0.18.1',
+            'coverage==5.5',
+            'pytest==6.2.5',
         ],
         'dist': [
-            'wheel',
-            'twine',
+            'wheel==0.37.0',
+            'twine==3.4.2',
         ],
     },
     entry_points={
