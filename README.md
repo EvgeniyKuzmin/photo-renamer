@@ -16,7 +16,20 @@ Renamer does it by executing the following actions:
 - Extracting time of creation from a file's attributes (metadata or filename).
 - Generating a new name for a file, and applying it to a existed or a new one file.
 
+
 ## Usage
+
+### Installation
+
+#### From PyPI
+    $ pip install photo_renamer
+
+#### From source code
+    $ git clone https://github.com/EvgeniyKuzmin/photo-renamer.git
+    $ cd photo-renamer
+    $ pip install .
+
+### Help message
 ```
 usage: photo-renamer [-h] [-t TEMPLATE] [-e EXT [EXT ...]] [-d DEST] [-c | -r] [-m | -n | -a] [-1 | -2 | -3 | -4] SOURCE
 
@@ -47,18 +60,31 @@ logging:
   -4, --error           Set ERROR level
 ```
 
-## Installation
-### For usage
-    $ pip install .
+### Versioning
+The package follows [Semantic Versioning](http://semver.org) and [PEP440](https://www.python.org/dev/peps/pep-0440/). Given a version number MAJOR.MINOR.PATCH, increment the:
+- MAJOR version when you make incompatible API changes,
+- MINOR version when you add functionality in a backwards compatible manner, and
+- PATCH version when you make backwards compatible bug fixes.
 
-### For development
-    $ pip install -e .[dev]
 
+## Contribution
 
-## Testing
+### Testing
+
+#### Installation for testing
+    $ pip install -e .[test]
+
+#### Run tests
     $ flake8
     $ coverage run -m pytest
     $ coverage report -m
+
+### Installation for distributing
+    $ pip install -e .[dist]
+
+#### Upload a release to PyPI
+    $ python setup.py bdist_wheel
+    $ twine upload -r testpypi dist/*
 
 
 ## License
